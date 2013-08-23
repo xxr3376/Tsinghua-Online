@@ -30,7 +30,7 @@ module.exports = (grunt) ->
 			lib:
 				src: [
 					'lib/jquery-1.9.1.min.js'
-					'tmp/lib/html-domparser.min.js'
+					'tmp/lib/*.min.js'
 				]
 				dest: 'build/js/lib.js'
 		uglify:
@@ -39,6 +39,7 @@ module.exports = (grunt) ->
 			lib:
 				files: [
 					{src: 'lib/html-domparser.js', dest: 'tmp/lib/html-domparser.min.js' }
+					{src: 'lib/md5.js', dest: 'tmp/lib/md5.min.js' }
 				]
 		stylus:
 			all:
