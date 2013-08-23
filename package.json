@@ -1,0 +1,23 @@
+{
+  "name": "Tsinghua-Online-Extension",
+  "version": "0.1.0",
+  "author": {
+    "name": "xxr3376"
+  },
+  "main": "Gruntfile.js",
+  "devDependencies": {
+    "iced-coffee-script": "~1.4.0",
+    "grunt": "~0.4.1",
+    "grunt-iced-coffee": "~0.7.0-a",
+    "grunt-contrib-clean": "~0.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xxr3376/Tsinghua-Online"
+  },
+  "licenses": [
+    {
+      "type": "MIT"
+    }
+  ]
+}
