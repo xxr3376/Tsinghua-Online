@@ -6,6 +6,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-contrib-concat'
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
 	grunt.loadNpmTasks 'grunt-contrib-stylus'
+	grunt.loadNpmTasks 'grunt-contrib-copy'
 	grunt.loadNpmTasks 'grunt-iced-coffee'
 
 	grunt.registerMultiTask 'template', ->
@@ -66,6 +67,16 @@ module.exports = (grunt) ->
 						ext: '.js'
 					}
 				]
+		copy:
+			asset:
+				files: [
+					{
+						expand: true
+						cwd: 'src/asset/'
+						src: '**/*'
+						dest: 'build/'
+					}
+				]
 		clean:
 			build: ['build/*']
 
@@ -80,5 +91,6 @@ module.exports = (grunt) ->
 		'lib'
 		'stylus'
 		'coffee:compile'
+		'copy:asset'
 		'manifest'
 	]
