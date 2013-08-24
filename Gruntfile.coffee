@@ -7,6 +7,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
 	grunt.loadNpmTasks 'grunt-contrib-stylus'
 	grunt.loadNpmTasks 'grunt-contrib-copy'
+	grunt.loadNpmTasks 'grunt-contrib-watch'
 	grunt.loadNpmTasks 'grunt-iced-coffee'
 
 	grunt.registerMultiTask 'template', ->
@@ -75,8 +76,27 @@ module.exports = (grunt) ->
 						cwd: 'src/asset/'
 						src: '**/*'
 						dest: 'build/'
+					},
+					{
+						expand: true
+						cwd: 'src/html/'
+						src: '**/*'
+						dest: 'build/'
 					}
 				]
+		watch:
+			options:
+				spawn: false
+			asset:
+				files: ['src/asset/**/*', 'src/html/**/*']
+				tasks: ['copy:asset']
+			coffee:
+				files: ['src/iced/**/*']
+				tasks: ['coffee']
+			css:
+				files: ['src/stylus/**/*']
+				tasks: ['stylus']
+
 		clean:
 			build: ['build/*']
 
