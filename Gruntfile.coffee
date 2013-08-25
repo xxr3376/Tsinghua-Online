@@ -59,6 +59,8 @@ module.exports = (grunt) ->
 				]
 		coffee:
 			compile:
+				options:
+					runtime: 'inline'
 				files: [
 					{
 						expand: true
