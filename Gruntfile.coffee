@@ -114,3 +114,7 @@ module.exports = (grunt) ->
 		'copy:asset'
 		'manifest'
 	]
+	grunt.registerTask 'dev', [
+		'default'
+		'watch'
+	]
