@@ -1,0 +1,46 @@
+@import "_normalize.styl"
+@import "_font-awesome.styl"
+
+support-for-ie = false
+vendors = webkit official
+
+@import "nib"
+
+$width = 124px
+$height = 16px
+
+html,
+body
+  font 12px "微软雅黑"
+
+.separator
+	height 0
+	margin 3px 2px
+	border 0
+	border-top 1px solid #ddd
+.item
+	display block
+	margin 0 2px
+	padding 4px 25px 4px 6px
+	height $height
+	line-height $height
+	width $width
+	position relative
+	border 1px solid transparent
+	border-radius 5px
+	&:hover
+		border 1px solid #CCC
+		background linear-gradient(top, 0% white, 40% rgb(242, 246, 252), 41% rgb(236, 242, 248) )
+	span.text
+		left 28px
+		position absolute
+	i[class^="icon"]
+		font-size 16px
+		color: #28C
+
+.item i.actived
+	opacity 0
+.item.active i.actived
+	opacity 1
+.item:hover i.actived
+	opacity 0.5
