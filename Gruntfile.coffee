@@ -98,7 +98,7 @@ module.exports = (grunt) ->
 				tasks: ['stylus']
 
 		clean:
-			build: ['build/*']
+			files: ['build', 'tmp', 'dist']
 
 	grunt.registerTask 'manifest', [
 		'template:manifest'
