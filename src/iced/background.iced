@@ -97,3 +97,10 @@ window.real_stats = () ->
 window.test_dropall = () ->
 	dropall_usereg (result) ->
 		console.log result
+chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
+	if feeds.op is CONST.op.updateFlow
+		real_time_userreg (result) ->
+			sendResponse(
+				data: result
+			)
+		return true

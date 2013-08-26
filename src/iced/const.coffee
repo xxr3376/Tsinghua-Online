@@ -5,3 +5,5 @@ window.CONST =
 		stats: "http://usereg.tsinghua.edu.cn/user_detail_statistics.php"
 	flag:
 		login_ok: 'ok'
+	op:
+		updateFlow: 'updateFlow'
