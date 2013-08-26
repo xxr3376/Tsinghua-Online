@@ -11,7 +11,8 @@ $height = 16px
 
 html,
 body
-  font 12px "微软雅黑"
+	font 12px "微软雅黑"
+	-webkit-user-select none
 
 .separator
 	height 0
@@ -28,6 +29,7 @@ body
 	position relative
 	border 1px solid transparent
 	border-radius 5px
+	cursor pointer
 	& i.actived
 		opacity 0
 	&.active i.actived
@@ -37,6 +39,9 @@ body
 		background linear-gradient(top, 0% white, 40% rgb(242, 246, 252), 41% rgb(236, 242, 248) )
 		& i.actived
 			opacity 0.3
+	&:active
+		border 1px solid #ABC
+		background linear-gradient(top, 0% #e8eef4, 100% #f5f9f4)
 	span.text
 		left 28px
 		position absolute
