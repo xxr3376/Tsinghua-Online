@@ -10,6 +10,31 @@ unit_convert = (input) ->
 	else
 		return number
 ######
+login_net_post = (username, md5_password, successCallback, failCallback) ->
+	$.post(
+		CONST.url.login_net
+		{
+			username: username
+			password: md5_password
+			drop: 0
+			type: 1
+			n: 100
+		}
+		(result) ->
+			if /^\d+,/.test result
+				successCallback result
+			else
+				failCallback result
+	)
+
+login_net = (callback) ->
+	username = localStorage.getItem 'username', ''
+	password = localStorage.getItem 'password', ''
+	if not username or not password
+		console.log "haven't set token, use setToken first"
+	login_net_post username,password,callback,(result) ->
+		console.log "failReason " + result
+
 login_usereg = (username, md5_password, successCallback, failCallback) ->
 	$.post(
 		CONST.url.login
@@ -93,6 +118,9 @@ real_time_userreg = (callback) ->
 
 ##############
 # interface
+window.login = () ->
+	login_net (result) ->
+		console.log "succeed result:" + result	
 window.get_stats = () ->
 	stats_usereg (result) ->
 		console.log result
