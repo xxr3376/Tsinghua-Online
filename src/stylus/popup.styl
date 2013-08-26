@@ -28,19 +28,18 @@ body
 	position relative
 	border 1px solid transparent
 	border-radius 5px
+	& i.actived
+		opacity 0
+	&.active i.actived
+		opacity 1
 	&:hover
 		border 1px solid #CCC
 		background linear-gradient(top, 0% white, 40% rgb(242, 246, 252), 41% rgb(236, 242, 248) )
+		& i.actived
+			opacity 0.3
 	span.text
 		left 28px
 		position absolute
 	i[class^="icon"]
 		font-size 16px
 		color: #28C
-
-.item i.actived
-	opacity 0
-.item.active i.actived
-	opacity 1
-.item:hover i.actived
-	opacity 0.5
