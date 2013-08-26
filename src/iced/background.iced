@@ -1,4 +1,15 @@
 parser = new DOMParser()
+
+# will convert unit to Byte
+unit_convert = (input) ->
+	matches = ($.trim input).match /(\d+(.\d+)?)([GMKB])/
+	number = parseFloat matches[1]
+	unit = matches[3]
+	if unit of CONST.unitConvert
+		return number * CONST.unitConvert[unit]
+	else
+		return number
+######
 login_usereg = (username, md5_password, successCallback, failCallback) ->
 	$.post(
 		CONST.url.login
@@ -38,7 +49,7 @@ drop_user = (userIP,chksum,callback) ->
 
 dropall_usereg = (callback) ->
 	await online_usereg defer online
-	while online.length>0
+	while online.length > 0
 		await drop_user online[0][0],online[0][2], defer suc
 		await online_usereg defer online
 	callback 0
@@ -55,10 +66,10 @@ online_usereg = (callback) ->
 				elms = (parser.parseFromString data,"text/html").querySelectorAll "td.maintd"
 				count = elms.length/12
 				rtn = []
-				if count>1
+				if count > 1
 					rtn = (elms[i*12+j].innerText for j in [2,3] for i in [1..count-1])
 					for i in [1..count-1]
-						elm = elms[12*i+11].children.item(0).outerHTML
+						elm = elms[12 * i + 11].children.item(0).outerHTML
 						rtn[i-1].push elm.match(/drop\('(.+?)','(.+?)'\)/)[2]
 				callback(rtn)
 		)
@@ -67,17 +78,17 @@ stats_usereg = (callback) ->
 	$.get( CONST.url.stats, (data) ->
 			doc = parser.parseFromString data,"text/html"
 			elms = doc.querySelectorAll "td.maintd"
-			wired_in = parseFloat elms[1].innerText
-			wireless_in = parseFloat elms[7].innerText
-			callback([wired_in,wireless_in,wired_in+wireless_in])
+			wired_in = unit_convert elms[1].innerText
+			wireless_in = unit_convert elms[7].innerText
+			callback wired_in + wireless_in
 		)
 
 real_time_userreg = (callback) ->
 	await
 		stats_usereg defer old
 		online_usereg defer online
-	total = old[2]
-	total += parseFloat(online[i][1])/1024 for i in [0..online.length-1] if online.length>0
+	total = old
+	total += (unit_convert online[i][1]) for i in [0..online.length - 1] if online.length > 0
 	callback(total)
 
 ##############
@@ -102,5 +113,17 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 		real_time_userreg (result) ->
 			sendResponse(
 				data: result
+			)
+		return true
+	else if feeds.op is CONST.op.updateConnectNumber
+		online_usereg (result) ->
+			sendResponse(
+				data: result.length
+			)
+		return true
+	else if feeds.op is CONST.op.dropAll
+		dropall_usereg (result) ->
+			sendResponse(
+				msg: 'ok'
 			)
 		return true
