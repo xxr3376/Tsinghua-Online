@@ -1,0 +1,39 @@
+@import "_normalize.styl"
+@import "_font-awesome.styl"
+
+support-for-ie = false
+vendors = webkit official
+
+@import "nib"
+
+html,
+body
+	font 14px "微软雅黑"
+	text-align center
+	background #6BACCF
+.box
+	border-radius 6px
+	box-shadow 1px 1px 2px
+	border 1px solid #DDD
+
+#page-wrap
+	width 960px
+	margin 0 auto
+	#header
+		margin 20px
+		#title
+			font-size 2.2em
+			display inline-block
+			color white
+			text-shadow 1px 1px 4px #222
+			font-family arial, sans-serif
+			font-weight bold
+			#logo
+				height 36px
+				vertical-align middle
+				padding-bottom 2px
+				-webkit-filter drop-shadow(1px 1px 5px #333)
+	#main-wrap
+		margin 0 120px
+		height 300px
+		background-color white

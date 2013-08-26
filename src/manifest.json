@@ -17,5 +17,6 @@
 		"default_icon": "icons/19.png",
 		"default_title": "Tsinghua Online",
 		"default_popup" : "popup.html"
-	}
+	},
+	"options_page": "options.html"
 }
