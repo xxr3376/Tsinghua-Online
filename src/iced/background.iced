@@ -35,6 +35,13 @@ login_net = (callback) ->
 	login_net_post username,password,callback,(result) ->
 		console.log "failReason " + result
 
+logout_net = (callback) ->
+	$.post(
+		CONST.url.logout_net
+		(res) ->
+			callback res
+	)
+
 login_usereg = (username, md5_password, successCallback, failCallback) ->
 	$.post(
 		CONST.url.login
@@ -120,7 +127,10 @@ real_time_userreg = (callback) ->
 # interface
 window.login = () ->
 	login_net (result) ->
-		console.log "succeed result:" + result	
+		console.log "succeed result:" + result
+window.logout = () ->
+	logout_net (res) ->
+		console.log "logout result: " + res	
 window.get_stats = () ->
 	stats_usereg (result) ->
 		console.log result
