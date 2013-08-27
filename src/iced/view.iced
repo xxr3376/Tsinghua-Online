@@ -2,7 +2,35 @@ $ () ->
 	#####
 	# util
 	#####
-	
+	window.cache = 
+		prefix: 'cache_'
+		assemble: (key, value, vaild, expireTime) ->
+			return JSON.stringify(
+				key: key
+				value: value
+				vaild: vaild
+				expireTime: expireTime
+				lastTime: null
+			)
+		# expireTime unit is millisecond
+		init: (key, expireTime) ->
+			localStorage.setItem (this.prefix + key), (assemble key, null, false, expireTime)
+		set: (key, value) ->
+			old = localStorage.getItem (this.prefix + key), null
+			old ?= assemble key, value, true, null
+			old.vaild = true
+			old.lastTime = (new Date()).getTime()
+			localStorage.setItem (this.prefix + key), old
+		get: (key, defaultValue) ->
+			item = localStorage.getItem (this.prefix + key), null
+			if not item
+				return defaultValue
+			else
+				now = new Date().getTime()
+				isExpired = (now - item.lastTime) > expireTime
+				if isExpired
+					return defaultValue
+				return item.value
 	# convert unit from Byte to most readable one
 	unit2readable = (input) ->
 		result = input + 'Byte'
@@ -24,7 +52,6 @@ $ () ->
 		flowDOM.text (unit2readable flowNumber)
 	setConnectNumber = (number) ->
 		cNumberDOM.text number
-
 	updateFlow = () ->
 		($ '#real-flow-btn i').show(100)
 		chrome.extension.sendMessage(
@@ -50,8 +77,10 @@ $ () ->
 				($ '#drop-all-btn i').hide(1000)
 		)
 	init = () ->
+		status.keepConnect = localStorage.getItem 'keepConnect', false
 		keepConnect_btn.on 'click', () ->
 			status.keepConnect = !status.keepConnect
+			localStorage.setItem 'keepConnect', status.keepConnect
 			updateGUI()
 			window.close()
 		flow_btn.on 'click', () ->
@@ -65,6 +94,14 @@ $ () ->
 		($ '#about-btn').on 'click', () ->
 			window.open 'options.html#1'
 		($ 'i.icon-refresh.icon-spin').hide()
+		($ '#connect-btn').on 'click', () ->
+			chrome.extension.sendMessage(
+				op:CONST.op.connectNow
+			)
+		($ '#disconnect-btn').on 'click', () ->
+			chrome.extension.sendMessage(
+				op:CONST.op.disconnect
+			)
 		updateGUI()
 		# now refresh data
 		updateFlow()

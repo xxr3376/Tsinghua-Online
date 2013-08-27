@@ -10,6 +10,25 @@ unit_convert = (input) ->
 	else
 		return number
 ######
+# check current login status
+# @output: {status: CONST.status.?, username: current_username}
+login_check = (callback) ->
+	$.post(CONST.url.check, "action=check_online", (response) ->
+		console.log response
+		matches = response.match /\d+,([^,]+),\d+,\d+,\d+/
+		if matches
+			callback(
+				status: CONST.status.logged_in
+				username: matches[1]
+			)
+		else
+			callback(
+				status: CONST.status.not_logged_in
+			)
+	).fail ->
+		callback(
+			status: CONST.status.cant_reach_net
+		)
 login_net_post = (username, md5_password, successCallback, failCallback) ->
 	$.post(
 		CONST.url.login_net
@@ -22,9 +41,9 @@ login_net_post = (username, md5_password, successCallback, failCallback) ->
 		}
 		(result) ->
 			if /^\d+,/.test result
-				successCallback result
+				successCallback && successCallback result
 			else
-				failCallback result
+				failCallback && failCallback result
 	)
 
 login_net = (callback) ->
@@ -39,7 +58,7 @@ logout_net = (callback) ->
 	$.post(
 		CONST.url.logout_net
 		(res) ->
-			callback res
+			callback && callback res
 	)
 
 login_usereg = (username, md5_password, successCallback, failCallback) ->
@@ -52,9 +71,9 @@ login_usereg = (username, md5_password, successCallback, failCallback) ->
 		}
 		(result) ->
 			if result == CONST.flag.login_ok
-				successCallback()
+				successCallback && successCallback()
 			else
-				failCallback result
+				failCallback && failCallback result
 	)
 login_guarantee = (callback) ->
 	username = localStorage.getItem 'username', ''
@@ -74,9 +93,9 @@ drop_user = (userIP,chksum,callback) ->
 		}
 		(result) ->
 			if result == "ok"
-				callback 1
+				callback && callback 1
 			else
-				callback 0
+				callback && callback 0
 	)
 
 dropall_usereg = (callback) ->
@@ -84,7 +103,7 @@ dropall_usereg = (callback) ->
 	while online.length > 0
 		await drop_user online[0][0],online[0][2], defer suc
 		await online_usereg defer online
-	callback 0
+	callback && callback 0
 
 drop = (ip,chksum) ->
 	console.log(chksum)
@@ -165,3 +184,9 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 				msg: 'ok'
 			)
 		return true
+	else if feeds.op is CONST.op.connectNow
+		login_net()
+		return false
+	else if feeds.op is CONST.op.disconnect
+		logout_net()
+		return false
