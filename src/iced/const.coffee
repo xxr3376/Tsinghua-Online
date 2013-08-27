@@ -25,3 +25,10 @@ window.CONST =
 		logged_in: 1
 		not_logged_in: 2
 		cant_reach_net: 3
+		keep_online:1
+		manual_connect:0
+	timeout:
+		IP_EXIST: 25000
+		NORMAL: 10000
+	code_list:
+		username_error: "ÓÃ»§Ãû´íÎó"	

@@ -1,5 +1,8 @@
 parser = new DOMParser()
-
+timeout_time = CONST.timeout.NORMAL
+online_status = CONST.status.manual_connect
+username = ""
+password = ""
 # will convert unit to Byte
 unit_convert = (input) ->
 	matches = ($.trim input).match /(\d+(.\d+)?)([GMKB])/
@@ -9,6 +12,59 @@ unit_convert = (input) ->
 		return number * CONST.unitConvert[unit]
 	else
 		return number
+
+get_error = (res) ->
+	if CONST.code_list[res]
+        	return CONST.code_list[res]
+	else 
+		return res
+
+handle_error = (errMsg) ->
+	online_status = CONST.status.manual_connect
+	console.log errMsg
+
+online_test = (foo) ->
+	if online_status == CONST.status.keep_online
+		setTimeout( (() ->
+			login_check foo)
+			,timeout_time)
+
+
+fail_online = (res) ->
+	switch res
+		when "ip_exist_error"
+			timeout_time = CONST.timeout.IP_EXIST
+			online_test check_timeout
+			break
+		else
+			handle_error get_error res
+
+success_online = (res) ->
+	console.log res
+	timeout_time = CONST.timeout.NORMAL
+	online_test check_timeout
+
+check_timeout = (data) ->
+	console.log(data.status)
+	xx = xx-1
+	if xx == 0
+		return callback "finished"
+	if data.status == CONST.status.not_logged_in
+		login_net_post username,password,success_online,fail_online
+	else if data.status == CONST.status.logged_in
+		timeout_time = CONST.timeout.NORMAL
+		online_test check_timeout
+	else if data.status == CONST.status.cant_reach_net
+		handle_error "无法连接到校园网"
+
+keep_online = (callback) ->		
+	username = localStorage.getItem 'username', ''
+	password = localStorage.getItem 'password', ''
+	if not username or not password
+		return console.log "haven't set token, use setToken first"
+	online_status = CONST.status.keep_online
+	online_test check_timeout
+
 ######
 # check current login status
 # @output: {status: CONST.status.?, username: current_username}
@@ -144,6 +200,13 @@ real_time_userreg = (callback) ->
 
 ##############
 # interface
+window.test_manual = () ->
+	handle_error "manual stop"
+
+window.test_keep_online = () ->
+	keep_online (result) ->
+		console.log "test keep online ok:" + result
+
 window.login = () ->
 	login_net (result) ->
 		console.log "succeed result:" + result
