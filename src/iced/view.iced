@@ -23,7 +23,7 @@ $ () ->
 			localStorage.setItem (this.prefix + key), old
 		get: (key, defaultValue) ->
 			item = localStorage.getItem (this.prefix + key), null
-			if not item
+			if not item or item.vaild isnt true
 				return defaultValue
 			else
 				now = new Date().getTime()
