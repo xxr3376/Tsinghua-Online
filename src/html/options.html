@@ -1,24 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="UTF-8">
-	<title>Tsinghua Online Settings</title>
-	<link rel="stylesheet" href="css/options.css" />
-	<script type="text/javascript" src="js/lib.js"></script>
-	<script type="text/javascript" src="js/const.js"></script>
-	<script type="text/javascript" src="js/options.js"></script>
-</head>
-<body>
-	<div id="page-wrap">
-		<div id="header">
-			<h1 id="title">
-				<img id="logo" src="icons/48.png" alt="logo" />
-				Tsinghua Online
-			</h1>
+	<head>
+		<meta charset="UTF-8">
+		<title>Tsinghua Online Settings</title>
+		<link rel="stylesheet" href="css/options.css" />
+		<script type="text/javascript" src="js/lib.js"></script>
+		<script type="text/javascript" src="js/const.js"></script>
+		<script type="text/javascript" src="js/options.js"></script>
+	</head>
+	<body>
+		<div id="page-wrap">
+			<div id="header">
+				<h1 id="title">
+					<img id="logo" src="icons/48.png" alt="logo" />
+					Tsinghua Online
+				</h1>
+			</div>
+			<ul id="menu">
+				<li><a href="#0" contentid="0">账户</a></li>
+				<li><a href="#1" contentid="1">关于</a></li>
+			</ul>
+			<div id="main-wrap" class="box">
+				<div id="wrap-0" class="panel">
+					<form class="pure-form pure-form-aligned" action="">
+						<div class="pure-control-group">
+							<label for="username">用户名</label>
+							<input id="username" type="text" placeholder="User ID" required/>
+						</div>
+						<div class="pure-control-group">
+							<label for="username">密码</label>
+							<input id="password" type="password" placeholder="Password" required/>
+						</div>
+						<button class="ladaa-btn" id="save-token">
+							<span class="ladda-label">保存</span>
+							<span class="ladda-spinner"><i class="icon-spinner icon-spin"></i></span>
+						</button>
+					</form>
+				</div>
+				<div id="wrap-1" class="panel">
+					about
+				</div>
+			</div>
 		</div>
-		<div id="main-wrap" class="box"></div>
-	
-	
-	</div>
-</body>
+	</body>
 </html>

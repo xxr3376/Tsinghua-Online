@@ -1,5 +1,6 @@
 @import "_normalize.styl"
 @import "_font-awesome.styl"
+@import "forms-min.css"
 
 support-for-ie = false
 vendors = webkit official
@@ -13,7 +14,7 @@ body
 	background #6BACCF
 .box
 	border-radius 6px
-	box-shadow 1px 1px 2px
+	box-shadow 3px 3px 5px #555
 	border 1px solid #DDD
 
 #page-wrap
@@ -33,7 +34,32 @@ body
 				vertical-align middle
 				padding-bottom 2px
 				-webkit-filter drop-shadow(1px 1px 5px #333)
+	ul#menu
+		list-style-type none
+		display block
+		padding 0
+		margin 4px
+		z-index -5
+		li
+			list-style none
+			display inline-block
+			a
+				padding 6px 8px 8px 8px
+				line-height 25px
+				font-weight bold
+				border 0
+				border-radius 5px 5px 0 0
+				color black
+				background-color #ddd
+				text-decoration none
+				&:hover,
+				&.active
+					background-color white
 	#main-wrap
 		margin 0 120px
+		padding 20px
 		height 300px
 		background-color white
+
+		.panel
+			display none

@@ -48,6 +48,7 @@ module.exports = (grunt) ->
 				options:
 					urlfunc: 'embedurl'
 					compress: false
+					"include css": true
 				files: [
 					{
 						expand: true

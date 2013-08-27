@@ -60,6 +60,10 @@ $ () ->
 			updateConnectNumber()
 		($ '#drop-all-btn').on 'click', () ->
 			dropAll()
+		($ '#options-btn').on 'click', () ->
+			window.open 'options.html#0'
+		($ '#about-btn').on 'click', () ->
+			window.open 'options.html#1'
 		($ 'i.icon-refresh.icon-spin').hide()
 		updateGUI()
 		# now refresh data
