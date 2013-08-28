@@ -25,10 +25,11 @@ window.CONST =
 		logged_in: 1
 		not_logged_in: 2
 		cant_reach_net: 3
-		keep_online:1
-		manual_connect:0
-	timeout:
+		auto_online_on:1
+		auto_online_off:0
+		auto_online_event_end:0
+	auto_online_intervals:
 		IP_EXIST: 25000
 		NORMAL: 10000
-	code_list:
+	err_code_list:
 		username_error: "用户名错误"
