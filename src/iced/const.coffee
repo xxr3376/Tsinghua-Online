@@ -31,4 +31,4 @@ window.CONST =
 		IP_EXIST: 25000
 		NORMAL: 10000
 	code_list:
-		username_error: "ÓÃ»§Ãû´íÎó"	
+		username_error: "ç”¨æˆ·åé”™è¯¯"

@@ -16,7 +16,7 @@ unit_convert = (input) ->
 get_error = (res) ->
 	if CONST.code_list[res]
         	return CONST.code_list[res]
-	else 
+	else
 		return res
 
 handle_error = (errMsg) ->
@@ -25,9 +25,9 @@ handle_error = (errMsg) ->
 
 online_test = (foo) ->
 	if online_status == CONST.status.keep_online
-		setTimeout( (() ->
-			login_check foo)
-			,timeout_time)
+		setTimeout( () ->
+				login_check foo
+			timeout_time)
 
 
 fail_online = (res) ->
@@ -55,7 +55,7 @@ check_timeout = (data) ->
 		timeout_time = CONST.timeout.NORMAL
 		online_test check_timeout
 	else if data.status == CONST.status.cant_reach_net
-		handle_error "无法连接到校园网"
+		handle_error "鏃犳硶杩炴帴鍒版牎鍥綉"
 
 keep_online = (callback) ->		
 	username = localStorage.getItem 'username', ''
