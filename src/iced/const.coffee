@@ -16,6 +16,7 @@ window.CONST =
 		connectNow: 'CN'
 		disconnect: 'disconnect'
 		keepOnlineChange: 'changeOnlineSetting'
+		getLastError: 'getLastError'
 	unitConvert:
 		'B' : 1
 		'K' : Math.pow(2, 10)
@@ -30,6 +31,9 @@ window.CONST =
 		auto_online_on: "1"
 		auto_online_off: "0"
 		auto_online_event_end: 0
+
+		connected: 4
+		unconnected: 5
 	auto_online_intervals:
 		IP_EXIST: 25000
 		NORMAL: 10000

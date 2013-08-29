@@ -15,11 +15,33 @@ unit_convert = (input) ->
 		return number * CONST.unitConvert[unit]
 	else
 		return number
-
-auto_online_handle_error = (err_code) ->
+###
+# about error
+###
+lastError = null
+set_error = (errorCode) ->
+	chrome.browserAction.setBadgeText(
+		text: '!'
+	)
+	lastError = errorCode
+clear_error = () ->
+	chrome.browserAction.setBadgeText(
+		text: ''
+	)
+change_icon = (connectStatus) ->
+	file = "/icons/19.png"
+	if connectStatus is CONST.status.unconnected
+		file = "/icons/disable.png"
+	chrome.browserAction.setIcon(
+		path: file
+	)
+###
+# error end
+###
+fatal_error_handler = (err_code) ->
 	auto_online_clear()
-	msg = if code of CONST.err_code_list then CONST.err_code_list[res] else res
-	console.log msg
+	#msg = if code of CONST.err_code_list then CONST.err_code_list[res] else res
+	set_error(err_code)
 
 auto_online_set_event = (interval) ->
 	if auto_online_event == CONST.status.auto_online_event_end
@@ -28,11 +50,13 @@ auto_online_set_event = (interval) ->
 			interval)
 
 auto_online_login_fail = (res) ->
+	console.log res
 	switch res
 		when "ip_exist_error"
+			console.log 'retry'
 			auto_online_set_event CONST.auto_online_intervals.IP_EXIST
 		else
-			auto_online_handle_error res
+			fatal_error_handler res
 
 auto_online_login_succ = (res) ->
 	console.log res
@@ -45,7 +69,7 @@ auto_online_handle_login_status = (data) ->
 	else if data.status == CONST.status.logged_in
 		auto_online_set_event CONST.auto_online_intervals.NORMAL
 	else if data.status == CONST.status.cant_reach_net
-		auto_online_handle_error 'no_connection'
+		fatal_error_handler 'no_connection'
 
 auto_online_clear = () ->
 	clearTimeout auto_online_event if auto_online_event
@@ -65,16 +89,19 @@ login_check = (callback) ->
 		console.log response
 		matches = response.match /\d+,([^,]+),\d+,\d+,\d+/
 		if matches
-			callback(
+			change_icon CONST.status.connected
+			callback && callback(
 				status: CONST.status.logged_in
 				username: matches[1]
 			)
 		else
-			callback(
+			change_icon CONST.status.unconnected
+			callback && callback(
 				status: CONST.status.not_logged_in
 			)
 	).fail ->
-		callback(
+		change_icon CONST.status.unconnected
+		callback && callback(
 			status: CONST.status.cant_reach_net
 		)
 login_net_post = (username, md5_password, successCallback, failCallback) ->
@@ -89,9 +116,11 @@ login_net_post = (username, md5_password, successCallback, failCallback) ->
 		}
 		(result) ->
 			if /^\d+,/.test result
+				change_icon CONST.status.connected
 				successCallback && successCallback result
 			else
 				failCallback && failCallback result
+				change_icon CONST.status.unconnected
 	)
 
 login_net = (callback) ->
@@ -99,14 +128,19 @@ login_net = (callback) ->
 	password = localStorage.getItem 'password', ''
 	if not username or not password
 		console.log "haven't set token, use setToken first"
-	login_net_post username,password,callback,(result) ->
-		console.log "failReason " + result
-
+	login_net_post(
+		username
+		password
+		callback
+		(result) ->
+			set_error result
+	)
 logout_net = (callback) ->
 	$.post(
 		CONST.url.logout_net
 		(res) ->
 			callback && callback res
+			change_icon CONST.status.unconnected
 	)
 
 login_usereg = (username, md5_password, successCallback, failCallback) ->
@@ -222,8 +256,20 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 	else if feeds.op is CONST.op.keepOnlineChange
 		process_online_setting_change feeds.now
 		return false
+	else if feeds.op is CONST.op.getLastError
+		if lastError
+			sendResponse(
+				error_num: lastError
+			)
+			clear_error()
+			return true
+		else
+			return false
 ##########
 # do when background.js start
+
+login_check()
+
 auto_online_switch = localStorage.getItem CONST.storageKey.auto_online
 if auto_online_switch is CONST.status.auto_online_on
 	auto_online_set_event CONST.auto_online_intervals.IMMEDIATELY
