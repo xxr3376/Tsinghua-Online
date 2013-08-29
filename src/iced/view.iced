@@ -1,4 +1,3 @@
-
 $ () ->
 	no_main_function = false
 	###
@@ -22,6 +21,16 @@ $ () ->
 					($ '#error-text').text text
 					($ '#error').show()
 	)
+	chrome.extension.onMessage.addListener (feeds, sender, sendResponse) ->
+		if feeds.op is CONST.op.passErrorCode
+			errorCode = feeds.lastError
+			text = (if errorCode in CONST.err_code_list then CONST.err_code_list[errorCode] else errorCode)
+			console.log text
+			($ '#error-text').text text
+			($ '#error').show()
+			return false
+		else if feeds.op is CONST.op.removeError
+			($ '#error').hide()
 	#####
 	# util
 	#####

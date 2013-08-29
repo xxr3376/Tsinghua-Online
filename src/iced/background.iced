@@ -20,16 +20,26 @@ unit_convert = (input) ->
 ###
 lastError = null
 set_error = (errorCode) ->
-	#TODO
-	#show send msg if popup is open
-	chrome.browserAction.setBadgeText(
-		text: '!'
+	chrome.extension.sendMessage(
+		op: CONST.op.passErrorCode
+		lastError: errorCode
+		() ->
+			sendError =  chrome.runtime.lastError
+			# if popup doesn't open
+			if sendError
+				chrome.browserAction.setBadgeText(
+					text: '!'
+				)
+				lastError = errorCode
 	)
-	lastError = errorCode
 clear_error = () ->
+	chrome.extension.sendMessage(
+		op: CONST.op.removeError
+	)
 	chrome.browserAction.setBadgeText(
 		text: ''
 	)
+	lastError = null
 change_icon = (connectStatus) ->
 	file = "/icons/19.png"
 	if connectStatus is CONST.status.unconnected
@@ -41,7 +51,6 @@ change_icon = (connectStatus) ->
 # error end
 ###
 fatal_error_handler = (err_code) ->
-	set_error(err_code)
 	if err_code in CONST.fatal_error
 		auto_online_clear()
 		localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
@@ -55,14 +64,13 @@ auto_online_set_event = (interval) ->
 				login_check auto_online_handle_login_status
 			interval)
 
-auto_online_login_fail = (res) ->
-	console.log res
-	switch res
+auto_online_login_fail = (err_code) ->
+	set_error(err_code)
+	switch err_code
 		when "ip_exist_error"
-			console.log 'retry'
 			auto_online_set_event CONST.auto_online_intervals.IP_EXIST
 		else
-			fatal_error_handler res
+			fatal_error_handler err_code
 
 auto_online_login_succ = (res) ->
 	console.log res

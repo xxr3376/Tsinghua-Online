@@ -17,6 +17,8 @@ window.CONST =
 		disconnect: 'disconnect'
 		keepOnlineChange: 'changeOnlineSetting'
 		getLastError: 'getLastError'
+		passErrorCode: 'passErrorCode'
+		removeError: 'rmError'
 	unitConvert:
 		'B' : 1
 		'K' : Math.pow(2, 10)
@@ -35,7 +37,7 @@ window.CONST =
 		connected: 4
 		unconnected: 5
 	auto_online_intervals:
-		IP_EXIST: 25000
+		IP_EXIST: 5000
 		NORMAL: 10000
 		IMMEDIATELY: 0
 	err_code_list:
