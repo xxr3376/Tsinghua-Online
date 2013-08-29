@@ -15,6 +15,7 @@ window.CONST =
 		dropAllConnect: 'dropAll'
 		connectNow: 'CN'
 		disconnect: 'disconnect'
+		keepOnlineChange: 'changeOnlineSetting'
 	unitConvert:
 		'B' : 1
 		'K' : Math.pow(2, 10)
@@ -25,10 +26,12 @@ window.CONST =
 		logged_in: 1
 		not_logged_in: 2
 		cant_reach_net: 3
-		keep_online:1
-		manual_connect:0
+		keep_online:"1"
+		manual_connect:"0"
 	timeout:
 		IP_EXIST: 25000
 		NORMAL: 10000
 	code_list:
 		username_error: "用户名错误"
+	storageKey:
+		keepConnect: 'sp_key_keepConnect'

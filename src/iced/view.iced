@@ -1,8 +1,10 @@
 $ () ->
+	status =
+		keepConnect: null
 	#####
 	# util
 	#####
-	window.cache = 
+	window.cache =
 		prefix: 'cache_'
 		assemble: (key, value, vaild, expireTime) ->
 			return JSON.stringify(
@@ -40,8 +42,18 @@ $ () ->
 				result = ('' + converted).substr(0, 5) + unit
 		return result
 
-	status =
-		keepConnect: false
+	switch_auto_connect_setting = () ->
+		current = localStorage.getItem CONST.storageKey.keepConnect
+		next = CONST.status.manual_connect
+		if next is current
+			next = CONST.status.keep_online
+		localStorage.setItem CONST.storageKey.keepConnect, next
+		status.keepConnect = next
+		chrome.extension.sendMessage(
+			op: CONST.op.keepOnlineChange
+			now: next
+		)
+
 	flowDOM = ($ '#flow')
 	cNumberDOM = ($ '#connect-number')
 
@@ -77,10 +89,9 @@ $ () ->
 				($ '#drop-all-btn i').hide(1000)
 		)
 	init = () ->
-		status.keepConnect = localStorage.getItem 'keepConnect', false
+		status.keepConnect = localStorage.getItem CONST.storageKey.keepConnect
 		keepConnect_btn.on 'click', () ->
-			status.keepConnect = !status.keepConnect
-			localStorage.setItem 'keepConnect', status.keepConnect
+			switch_auto_connect_setting()
 			updateGUI()
 			window.close()
 		flow_btn.on 'click', () ->
@@ -99,16 +110,20 @@ $ () ->
 				op:CONST.op.connectNow
 			)
 		($ '#disconnect-btn').on 'click', () ->
+			localStorage.setItem CONST.storageKey.keepConnect, CONST.status.manual_connect
+			status.keepConnect = CONST.status.manual_connect
 			chrome.extension.sendMessage(
 				op:CONST.op.disconnect
 			)
+			updateGUI()
+			window.close()
 		updateGUI()
 		# now refresh data
 		updateFlow()
 		updateConnectNumber()
 	updateGUI = () ->
-		if status.keepConnect
+		if status.keepConnect is CONST.status.keep_online
 			keepConnect_btn.addClass 'active'
-		else
+		else if status.keepConnect is CONST.status.manual_connect
 			keepConnect_btn.removeClass 'active'
 	init()

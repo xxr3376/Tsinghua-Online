@@ -1,8 +1,6 @@
 parser = new DOMParser()
 timeout_time = CONST.timeout.NORMAL
-online_status = CONST.status.manual_connect
-username = ""
-password = ""
+timeout_function_id = 0
 # will convert unit to Byte
 unit_convert = (input) ->
 	matches = ($.trim input).match /(\d+(.\d+)?)([GMKB])/
@@ -20,12 +18,14 @@ get_error = (res) ->
 		return res
 
 handle_error = (errMsg) ->
-	online_status = CONST.status.manual_connect
+	localStorage.setItem CONST.storageKey.keepConnect, CONST.status.manual_connect
 	console.log errMsg
 
 online_test = (foo) ->
-	if online_status == CONST.status.keep_online
-		setTimeout( () ->
+	online_status = localStorage.getItem CONST.storageKey.keepConnect
+	if online_status is CONST.status.keep_online
+		timeout_function_id = setTimeout( () ->
+				timeout_function_id = 0
 				login_check foo
 			timeout_time)
 
@@ -57,13 +57,13 @@ check_timeout = (data) ->
 	else if data.status == CONST.status.cant_reach_net
 		handle_error "无法连接到校园网"
 
-keep_online = (callback) ->		
-	username = localStorage.getItem 'username', ''
-	password = localStorage.getItem 'password', ''
-	if not username or not password
-		return console.log "haven't set token, use setToken first"
-	online_status = CONST.status.keep_online
-	online_test check_timeout
+
+process_online_setting_change = (nowStatus) ->
+	if nowStatus is CONST.status.keep_online
+		online_test check_timeout
+	else if nowStatus is CONST.status.manual_connect and timeout_function_id
+		clearTimeout(timeout_function_id)
+		timeout_function_id = 0
 
 ######
 # check current login status
@@ -198,36 +198,9 @@ real_time_userreg = (callback) ->
 	total += (unit_convert online[i][1]) for i in [0..online.length - 1] if online.length > 0
 	callback(total)
 
+
 ##############
 # interface
-window.test_manual = () ->
-	handle_error "manual stop"
-
-window.test_keep_online = () ->
-	keep_online (result) ->
-		console.log "test keep online ok:" + result
-
-window.login = () ->
-	login_net (result) ->
-		console.log "succeed result:" + result
-window.logout = () ->
-	logout_net (res) ->
-		console.log "logout result: " + res	
-window.get_stats = () ->
-	stats_usereg (result) ->
-		console.log result
-window.setToken = (username, password) ->
-	localStorage.setItem 'username', username
-	localStorage.setItem 'password', (hex_md5 password)
-window.online_stats = () ->
-	online_usereg (result) ->
-		console.log(result)
-window.real_stats = () ->
-	real_time_userreg (result) ->
-		console.log result
-window.test_dropall = () ->
-	dropall_usereg (result) ->
-		console.log result
 chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 	if feeds.op is CONST.op.updateFlow
 		real_time_userreg (result) ->
@@ -251,5 +224,9 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 		login_net()
 		return false
 	else if feeds.op is CONST.op.disconnect
+		process_online_setting_change CONST.status.manual_connect
 		logout_net()
+		return false
+	else if feeds.op is CONST.op.keepOnlineChange
+		process_online_setting_change feeds.now
 		return false
