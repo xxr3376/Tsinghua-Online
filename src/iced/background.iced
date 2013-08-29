@@ -41,6 +41,7 @@ change_icon = (connectStatus) ->
 fatal_error_handler = (err_code) ->
 	auto_online_clear()
 	#msg = if code of CONST.err_code_list then CONST.err_code_list[res] else res
+	localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
 	set_error(err_code)
 
 auto_online_set_event = (interval) ->
