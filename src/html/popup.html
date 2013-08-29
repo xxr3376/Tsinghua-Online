@@ -9,28 +9,48 @@
 		<script type="text/javascript" src="js/view.js"></script>
 	</head>
 	<body>
-		<div id="keep-connect-btn" class="item">
-			<i class="icon-ok actived"></i>
-			<span class="text"> 保持联网 </span>
+		<div id="main-function">
+			<div id="keep-connect-btn" class="item">
+				<i class="icon-ok actived"></i>
+				<span class="text"> 保持联网 </span>
+			</div>
+			<div class="item" id="connect-btn">
+				<span class="text"> 立刻重连</span>
+			</div>
+			<div class="item" id="disconnect-btn">
+				<span class="text"> 断开当前账号 </span>
+			</div>
+			<div class="separator"></div>
+			<div id="error" style="display:none;">
+						<div class="item">
+							<span class="text"> 错误信息 <span id="error-text"></span> </span>
+						</div>
+						<div class="separator"></div>
+			</div>
+			<div id="real-flow-btn" class="item">
+				<i class="icon-refresh icon-spin"></i>
+				<span class="text"> 实时流量: <span id="flow"></span> </span>
+			</div>
+			<div id="connect-number-btn" class="item">
+				<i class="icon-refresh icon-spin"></i>
+				<span class="text"> 连接数: <span id="connect-number"></span></span>
+			</div>
+			<div id="drop-all-btn" class="item">
+				<i class="icon-refresh icon-spin"></i>
+				<span class="text"> 断开所有登陆IP </span>
+			</div>
 		</div>
-		<div class="item" id="connect-btn">
-			<span class="text"> 立刻重连</span>
+		<div id="wrong-token" style="display:none;">
+			<div class="item-free">
+				哎呀！登录失败了<br />
+				<a href="options.html#0">去修改密码</a>
+			</div>
 		</div>
-		<div class="item" id="disconnect-btn">
-			<span class="text"> 断开当前账号 </span>
-		</div>
-		<div class="separator"></div>
-		<div id="real-flow-btn" class="item">
-			<i class="icon-refresh icon-spin"></i>
-			<span class="text"> 实时流量: <span id="flow"></span> </span>
-		</div>
-		<div id="connect-number-btn" class="item">
-			<i class="icon-refresh icon-spin"></i>
-			<span class="text"> 连接数: <span id="connect-number"></span></span>
-		</div>
-		<div id="drop-all-btn" class="item">
-			<i class="icon-refresh icon-spin"></i>
-			<span class="text"> 断开所有登陆IP </span>
+		<div id="no-token" style="display:none;">
+			<div class="item-free">
+				没设置密码没法用啦~<br />
+				<a href="options.html#0">去设置密码</a>
+			</div>
 		</div>
 		<div class="separator"></div>
 		<div class="item" id="options-btn">

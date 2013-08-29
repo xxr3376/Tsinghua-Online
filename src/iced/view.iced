@@ -1,6 +1,27 @@
+
 $ () ->
-	status =
-		keepConnect: null
+	no_main_function = false
+	###
+	# get Error, Do it at first
+	###
+	chrome.extension.sendMessage(
+		op: CONST.op.getLastError
+		(response) ->
+			errorCode = response.lastError
+			switch errorCode
+				when "username_error", "password_error"
+					($ '#main-function').hide()
+					no_main_function = true
+					($ '#wrong-token').show()
+				when "no_token"
+					($ '#main-function').hide()
+					no_main_function = true
+					($ '#no-token').show()
+				else
+					text = (if errorCode in CONST.err_code_list then CONST.err_code_list[errorCode] else errorCode)
+					($ '#error-text').text text
+					($ '#error').show()
+	)
 	#####
 	# util
 	#####
@@ -48,7 +69,6 @@ $ () ->
 		if next is current
 			next = CONST.status.auto_online_on
 		localStorage.setItem CONST.storageKey.auto_online, next
-		status.keepConnect = next
 		chrome.extension.sendMessage(
 			op: CONST.op.keepOnlineChange
 			now: next
@@ -89,7 +109,6 @@ $ () ->
 				($ '#drop-all-btn i').hide(1000)
 		)
 	init = () ->
-		status.keepConnect = localStorage.getItem CONST.storageKey.auto_online
 		keepConnect_btn.on 'click', () ->
 			switch_auto_connect_setting()
 			updateGUI()
@@ -111,7 +130,6 @@ $ () ->
 			)
 		($ '#disconnect-btn').on 'click', () ->
 			localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
-			status.keepConnect = CONST.status.auto_online_off
 			chrome.extension.sendMessage(
 				op:CONST.op.disconnect
 			)
@@ -119,11 +137,13 @@ $ () ->
 			window.close()
 		updateGUI()
 		# now refresh data
-		updateFlow()
-		updateConnectNumber()
+		if not no_main_function
+			updateFlow()
+			updateConnectNumber()
 	updateGUI = () ->
-		if status.keepConnect is CONST.status.auto_online_on
+		status = localStorage.getItem CONST.storageKey.auto_online
+		if status is CONST.status.auto_online_on
 			keepConnect_btn.addClass 'active'
-		else if status.keepConnect is CONST.status.auto_online_off
+		else if status is CONST.status.auto_online_off
 			keepConnect_btn.removeClass 'active'
 	init()
