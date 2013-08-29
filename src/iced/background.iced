@@ -41,11 +41,13 @@ change_icon = (connectStatus) ->
 # error end
 ###
 fatal_error_handler = (err_code) ->
-	#TODO reimplement!!!!!!
-	auto_online_clear()
-	#msg = if code of CONST.err_code_list then CONST.err_code_list[res] else res
-	localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
 	set_error(err_code)
+	if err_code in CONST.fatal_error
+		auto_online_clear()
+		localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
+	else
+		auto_online_set_event CONST.auto_online_intervals.NORMAL
+
 
 auto_online_set_event = (interval) ->
 	if auto_online_event == CONST.status.auto_online_event_end
@@ -73,7 +75,8 @@ auto_online_handle_login_status = (data) ->
 	else if data.status == CONST.status.logged_in
 		auto_online_set_event CONST.auto_online_intervals.NORMAL
 	else if data.status == CONST.status.cant_reach_net
-		fatal_error_handler 'no_connection'
+		set_error('no_connection')
+		auto_online_set_event CONST.auto_online_intervals.NORMAL
 
 auto_online_clear = () ->
 	clearTimeout auto_online_event if auto_online_event

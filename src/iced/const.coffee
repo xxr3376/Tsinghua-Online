@@ -60,5 +60,12 @@ window.CONST =
 		ip_alloc: "您不是这个地址的合法拥有者，IP 地址已经分配给其它用户"
 		ip_invaild: "您是区内地址，无法使用"
 		no_connection: "无法连接到校园网"
+	fatal_error: [
+		"username_error"
+		"password_error"
+		"available_error"
+		"delete_error"
+		"status_error"
+	]
 	storageKey:
 		auto_online: 'sp_key_auto_online'
