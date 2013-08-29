@@ -20,6 +20,8 @@ unit_convert = (input) ->
 ###
 lastError = null
 set_error = (errorCode) ->
+	#TODO
+	#show send msg if popup is open
 	chrome.browserAction.setBadgeText(
 		text: '!'
 	)
@@ -39,6 +41,7 @@ change_icon = (connectStatus) ->
 # error end
 ###
 fatal_error_handler = (err_code) ->
+	#TODO reimplement!!!!!!
 	auto_online_clear()
 	#msg = if code of CONST.err_code_list then CONST.err_code_list[res] else res
 	localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
@@ -91,6 +94,7 @@ login_check = (callback) ->
 		matches = response.match /\d+,([^,]+),\d+,\d+,\d+/
 		if matches
 			change_icon CONST.status.connected
+			clear_error()
 			callback && callback(
 				status: CONST.status.logged_in
 				username: matches[1]
@@ -118,10 +122,11 @@ login_net_post = (username, md5_password, successCallback, failCallback) ->
 		(result) ->
 			if /^\d+,/.test result
 				change_icon CONST.status.connected
+				clear_error()
 				successCallback && successCallback result
 			else
-				failCallback && failCallback result
 				change_icon CONST.status.unconnected
+				failCallback && failCallback result
 	)
 
 login_net = (callback) ->
