@@ -6,7 +6,6 @@ password = localStorage.getItem 'password'
 auto_online_interval = CONST.auto_online_intervals.NORMAL
 auto_online_event = CONST.status.auto_online_event_end
 
-timeout_function_id = 0
 # will convert unit to Byte
 unit_convert = (input) ->
 	matches = ($.trim input).match /(\d+(.\d+)?)([GMKB])/
@@ -17,40 +16,34 @@ unit_convert = (input) ->
 	else
 		return number
 
-get_error_msg = (res) ->
-	return if code of CONST.err_code_list then CONST.err_code_list[res] else res
-
 auto_online_handle_error = (err_code) ->
 	auto_online_clear()
-	console.log (get_error_msg err_code)
+	msg = if code of CONST.err_code_list then CONST.err_code_list[res] else res
+	console.log msg
 
-auto_online_set_event = () ->
+auto_online_set_event = (interval) ->
 	if auto_online_event == CONST.status.auto_online_event_end
 		auto_online_event = setTimeout( () ->
 				login_check auto_online_handle_login_status
-			auto_online_interval)
+			interval)
 
 auto_online_login_fail = (res) ->
 	switch res
 		when "ip_exist_error"
-			auto_online_interval = CONST.auto_online_intervals.IP_EXIST
-			auto_online_set_event()
-			break
+			auto_online_set_event CONST.auto_online_intervals.IP_EXIST
 		else
 			auto_online_handle_error res
 
 auto_online_login_succ = (res) ->
 	console.log res
-	auto_online_interval = CONST.auto_online_intervals.NORMAL
-	auto_online_set_event()
+	auto_online_set_event CONST.auto_online_intervals.NORMAL
 
 auto_online_handle_login_status = (data) ->
 	auto_online_event = CONST.status.auto_online_event_end
 	if data.status == CONST.status.not_logged_in
 		login_net_post username,password,auto_online_login_succ,auto_online_login_fail
 	else if data.status == CONST.status.logged_in
-		auto_online_interval = CONST.auto_online_intervals.NORMAL
-		auto_online_set_event()
+		auto_online_set_event CONST.auto_online_intervals.NORMAL
 	else if data.status == CONST.status.cant_reach_net
 		auto_online_handle_error 'no_connection'
 
@@ -60,8 +53,8 @@ auto_online_clear = () ->
 
 process_online_setting_change = (nowStatus) ->
 	if nowStatus is CONST.status.auto_online_on
-		auto_online_set_event()
-	else if nowStatus is CONST.status.auto_online_off and timeout_function_id
+		auto_online_set_event CONST.auto_online_intervals.IMMEDIATELY
+	else if nowStatus is CONST.status.auto_online_off
 		auto_online_clear()
 
 ######
@@ -233,4 +226,4 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 # do when background.js start
 auto_online_switch = localStorage.getItem CONST.storageKey.auto_online
 if auto_online_switch is CONST.status.auto_online_on
-	auto_online_set_event()
+	auto_online_set_event CONST.auto_online_intervals.IMMEDIATELY

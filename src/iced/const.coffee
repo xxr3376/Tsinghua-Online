@@ -33,6 +33,7 @@ window.CONST =
 	auto_online_intervals:
 		IP_EXIST: 25000
 		NORMAL: 10000
+		IMMEDIATELY: 0
 	err_code_list:
 		username_error: "用户名错误"
 		password_error: "密码错误"
