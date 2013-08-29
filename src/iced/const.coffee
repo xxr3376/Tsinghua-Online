@@ -35,6 +35,8 @@ window.CONST =
 		NORMAL: 10000
 	err_code_list:
 		username_error: "用户名错误"
+	storageKey:
+		auto_online: 'sp_key_auto_online'
 ###
     var code = {
 #        "username_error": function() {
@@ -66,5 +68,3 @@ window.CONST =
         "ip_invaild": "您是区内地址，无法使用。"
     }[res];
 ###
-	storageKey:
-		auto_online: 'sp_key_auto_online'

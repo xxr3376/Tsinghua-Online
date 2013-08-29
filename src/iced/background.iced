@@ -1,5 +1,8 @@
 parser = new DOMParser()
 
+username = localStorage.getItem 'username'
+password = localStorage.getItem 'password'
+
 auto_online_interval = CONST.auto_online_intervals.NORMAL
 auto_online_event = CONST.status.auto_online_event_end
 
@@ -233,5 +236,5 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 ##########
 # do when background.js start
 auto_online_switch = localStorage.getItem CONST.storageKey.auto_online
-if auto_online is CONST.status.auto_online_on
+if auto_online_switch is CONST.status.auto_online_on
 	auto_online_set_event()

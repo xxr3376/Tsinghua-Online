@@ -122,8 +122,8 @@ $ () ->
 		updateFlow()
 		updateConnectNumber()
 	updateGUI = () ->
-		if status.keepConnect is CONST.status.keep_online
+		if status.keepConnect is CONST.status.auto_online_on
 			keepConnect_btn.addClass 'active'
-		else if status.keepConnect is CONST.status.manual_connect
+		else if status.keepConnect is CONST.status.auto_online_off
 			keepConnect_btn.removeClass 'active'
 	init()
