@@ -17,15 +17,12 @@ unit_convert = (input) ->
 	else
 		return number
 
-get_err_code = (res) ->
-	code = CONST.err_code_list[res]
-	return code if code
-	return res
+get_error_msg = (res) ->
+	return if code of CONST.err_code_list then CONST.err_code_list[res] else res
 
-auto_online_handle_error = (errMsg) ->
-	clearTimeout auto_online_event if auto_online_event
-	auto_online_event = CONST.status.auto_online_event_end
-	console.log errMsg
+auto_online_handle_error = (err_code) ->
+	auto_online_clear()
+	console.log (get_error_msg err_code)
 
 auto_online_set_event = () ->
 	if auto_online_event == CONST.status.auto_online_event_end
@@ -40,7 +37,7 @@ auto_online_login_fail = (res) ->
 			auto_online_set_event()
 			break
 		else
-			auto_online_handle_error get_err_code res
+			auto_online_handle_error res
 
 auto_online_login_succ = (res) ->
 	console.log res
@@ -55,11 +52,10 @@ auto_online_handle_login_status = (data) ->
 		auto_online_interval = CONST.auto_online_intervals.NORMAL
 		auto_online_set_event()
 	else if data.status == CONST.status.cant_reach_net
-		auto_online_handle_error "无法连接到校园网"
+		auto_online_handle_error 'no_connection'
 
 auto_online_clear = () ->
 	clearTimeout auto_online_event if auto_online_event
-	console.log auto_online_event
 	auto_online_event = CONST.status.auto_online_event_end
 
 process_online_setting_change = (nowStatus) ->
