@@ -1,9 +1,9 @@
 parser = new DOMParser()
+
 auto_online_interval = CONST.auto_online_intervals.NORMAL
 auto_online_event = CONST.status.auto_online_event_end
 
-username = ""
-password = ""
+timeout_function_id = 0
 # will convert unit to Byte
 unit_convert = (input) ->
 	matches = ($.trim input).match /(\d+(.\d+)?)([GMKB])/
@@ -29,7 +29,6 @@ auto_online_set_event = () ->
 		auto_online_event = setTimeout( () ->
 				login_check auto_online_handle_login_status
 			auto_online_interval)
-
 
 auto_online_login_fail = (res) ->
 	switch res
@@ -59,6 +58,12 @@ auto_online_clear = () ->
 	clearTimeout auto_online_event if auto_online_event
 	console.log auto_online_event
 	auto_online_event = CONST.status.auto_online_event_end
+
+process_online_setting_change = (nowStatus) ->
+	if nowStatus is CONST.status.auto_online_on
+		auto_online_set_event()
+	else if nowStatus is CONST.status.auto_online_off and timeout_function_id
+		auto_online_clear()
 
 ######
 # check current login status
@@ -193,40 +198,9 @@ real_time_userreg = (callback) ->
 	total += (unit_convert online[i][1]) for i in [0..online.length - 1] if online.length > 0
 	callback(total)
 
+
 ##############
 # interface
-window.test_auto_online_clear = () ->
-	auto_online_clear()
-
-window.test_auto_online = () ->
-	username = localStorage.getItem 'username', ''
-	password = localStorage.getItem 'password', ''
-	if not username or not password
-		console.log "haven't set token, use setToken first"
-	else
-		auto_online_set_event()
-
-window.login = () ->
-	login_net (result) ->
-		console.log "succeed result:" + result
-window.logout = () ->
-	logout_net (res) ->
-		console.log "logout result: " + res	
-window.get_stats = () ->
-	stats_usereg (result) ->
-		console.log result
-window.setToken = (username, password) ->
-	localStorage.setItem 'username', username
-	localStorage.setItem 'password', (hex_md5 password)
-window.online_stats = () ->
-	online_usereg (result) ->
-		console.log(result)
-window.real_stats = () ->
-	real_time_userreg (result) ->
-		console.log result
-window.test_dropall = () ->
-	dropall_usereg (result) ->
-		console.log result
 chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 	if feeds.op is CONST.op.updateFlow
 		real_time_userreg (result) ->
@@ -250,5 +224,14 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 		login_net()
 		return false
 	else if feeds.op is CONST.op.disconnect
+		process_online_setting_change CONST.status.auto_online_off
 		logout_net()
 		return false
+	else if feeds.op is CONST.op.keepOnlineChange
+		process_online_setting_change feeds.now
+		return false
+##########
+# do when background.js start
+auto_online_switch = localStorage.getItem CONST.storageKey.auto_online
+if auto_online is CONST.status.auto_online_on
+	auto_online_set_event()
