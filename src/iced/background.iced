@@ -1,10 +1,17 @@
 parser = new DOMParser()
 
-username = localStorage.getItem 'username'
-password = localStorage.getItem 'password'
-
 auto_online_interval = CONST.auto_online_intervals.NORMAL
 auto_online_event = CONST.status.auto_online_event_end
+
+# about token
+
+get_token = () ->
+	username = localStorage.getItem 'username', null
+	password = localStorage.getItem 'password', null
+	if not username or not password
+		set_error "no_token"
+		throw new Error("no_token")
+	return [username, password]
 
 # will convert unit to Byte
 unit_convert = (input) ->
@@ -24,7 +31,7 @@ set_error = (errorCode) ->
 		op: CONST.op.passErrorCode
 		lastError: errorCode
 		() ->
-			sendError =  chrome.runtime.lastError
+			sendError = chrome.runtime.lastError
 			# if popup doesn't open
 			if sendError
 				chrome.browserAction.setBadgeText(
@@ -79,7 +86,7 @@ auto_online_login_succ = (res) ->
 auto_online_handle_login_status = (data) ->
 	auto_online_event = CONST.status.auto_online_event_end
 	if data.status == CONST.status.not_logged_in
-		login_net_post username,password,auto_online_login_succ,auto_online_login_fail
+		login_net_post auto_online_login_succ,auto_online_login_fail
 	else if data.status == CONST.status.logged_in
 		auto_online_set_event CONST.auto_online_intervals.NORMAL
 	else if data.status == CONST.status.cant_reach_net
@@ -120,12 +127,13 @@ login_check = (callback) ->
 		callback && callback(
 			status: CONST.status.cant_reach_net
 		)
-login_net_post = (username, md5_password, successCallback, failCallback) ->
+login_net_post = (successCallback, failCallback) ->
+	[username, password] = get_token()
 	$.post(
 		CONST.url.login_net
 		{
 			username: username
-			password: md5_password
+			password: password
 			drop: 0
 			type: 1
 			n: 100
@@ -140,15 +148,9 @@ login_net_post = (username, md5_password, successCallback, failCallback) ->
 				failCallback && failCallback result
 	)
 
-login_net = (callback) ->
-	username = localStorage.getItem 'username', ''
-	password = localStorage.getItem 'password', ''
-	if not username or not password
-		console.log "haven't set token, use setToken first"
+login_net = (successCallback) ->
 	login_net_post(
-		username
-		password
-		callback
+		successCallback
 		(result) ->
 			set_error result
 	)
@@ -160,13 +162,14 @@ logout_net = (callback) ->
 			change_icon CONST.status.unconnected
 	)
 
-login_usereg = (username, md5_password, successCallback, failCallback) ->
+login_usereg = (successCallback, failCallback) ->
+	[ username, password] = get_token()
 	$.post(
 		CONST.url.login
 		{
 			action: "login"
 			user_login_name: username
-			user_password: md5_password
+			user_password: password
 		}
 		(result) ->
 			if result == CONST.flag.login_ok
@@ -174,13 +177,10 @@ login_usereg = (username, md5_password, successCallback, failCallback) ->
 			else
 				failCallback && failCallback result
 	)
-login_guarantee = (callback) ->
-	username = localStorage.getItem 'username', ''
-	password = localStorage.getItem 'password', ''
-	if not username or not password
-		console.log "haven't set token, use setToken first"
-	login_usereg username, password, callback, (failReason) ->
+login_guarantee = (successCallback) ->
+	login_usereg successCallback, (failReason) ->
 		console.log("登录失败：" + failReason)
+
 drop_user = (userIP,chksum,callback) ->
 	console.log "IP:"+userIP+" chksum:"+chksum
 	$.post(
@@ -276,7 +276,7 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 	else if feeds.op is CONST.op.getLastError
 		if lastError
 			sendResponse(
-				error_num: lastError
+				lastError: lastError
 			)
 			clear_error()
 			return true
