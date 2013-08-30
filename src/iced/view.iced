@@ -120,6 +120,8 @@ $ () ->
 				($ '#drop-all-btn i').hide(1000)
 		)
 	init = () ->
+		($ '#no-token, #wrong-token').on 'click', () ->
+			window.open 'options.html#0'
 		keepConnect_btn.on 'click', () ->
 			switch_auto_connect_setting()
 			updateGUI()

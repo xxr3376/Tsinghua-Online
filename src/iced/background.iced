@@ -41,10 +41,11 @@ set_error = (errorCode) ->
 				)
 				lastError = errorCode
 	)
-clear_error = () ->
-	chrome.extension.sendMessage(
-		op: CONST.op.removeError
-	)
+clear_error = (noMessage) ->
+	if not noMessage
+		chrome.extension.sendMessage(
+			op: CONST.op.removeError
+		)
 	chrome.browserAction.setBadgeText(
 		text: ''
 	)
@@ -289,7 +290,7 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 			sendResponse(
 				lastError: lastError
 			)
-			clear_error()
+			clear_error(true)
 			return true
 		else
 			return false
