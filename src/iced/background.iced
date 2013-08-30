@@ -10,6 +10,7 @@ get_token = () ->
 	password = localStorage.getItem 'password', null
 	if not username or not password
 		set_error "no_token"
+		auto_online_clear()
 		throw new Error("no_token")
 	return [username, password]
 
@@ -27,6 +28,7 @@ unit_convert = (input) ->
 ###
 lastError = null
 set_error = (errorCode) ->
+	lastError = null
 	chrome.extension.sendMessage(
 		op: CONST.op.passErrorCode
 		lastError: errorCode

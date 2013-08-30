@@ -37,7 +37,7 @@ window.CONST =
 		connected: 4
 		unconnected: 5
 	auto_online_intervals:
-		IP_EXIST: 5000
+		IP_EXIST: 25000
 		NORMAL: 10000
 		IMMEDIATELY: 0
 	err_code_list:
@@ -62,6 +62,7 @@ window.CONST =
 		ip_alloc: "您不是这个地址的合法拥有者，IP 地址已经分配给其它用户"
 		ip_invaild: "您是区内地址，无法使用"
 		no_connection: "无法连接到校园网"
+		no_token: "没有设置用户名密码"
 	fatal_error: [
 		"username_error"
 		"password_error"

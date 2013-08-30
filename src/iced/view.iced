@@ -7,30 +7,31 @@ $ () ->
 		op: CONST.op.getLastError
 		(response) ->
 			errorCode = response.lastError
-			switch errorCode
-				when "username_error", "password_error"
-					($ '#main-function').hide()
-					no_main_function = true
-					($ '#wrong-token').show()
-				when "no_token"
-					($ '#main-function').hide()
-					no_main_function = true
-					($ '#no-token').show()
-				else
-					text = (if errorCode in CONST.err_code_list then CONST.err_code_list[errorCode] else errorCode)
-					($ '#error-text').text text
-					($ '#error').show()
+			show_error errorCode
 	)
 	chrome.extension.onMessage.addListener (feeds, sender, sendResponse) ->
 		if feeds.op is CONST.op.passErrorCode
 			errorCode = feeds.lastError
-			text = (if errorCode in CONST.err_code_list then CONST.err_code_list[errorCode] else errorCode)
-			console.log text
-			($ '#error-text').text text
-			($ '#error').show()
-			return false
+			show_error errorCode
 		else if feeds.op is CONST.op.removeError
 			($ '#error').hide()
+			($ '#main-function').show()
+	show_error = (errorCode) ->
+		switch errorCode
+			when "username_error", "password_error"
+				($ '#main-function').hide()
+				no_main_function = true
+				($ '#wrong-token').show()
+			when "no_token"
+				($ '#main-function').hide()
+				no_main_function = true
+				($ '#no-token').show()
+			else
+				text = (if errorCode of CONST.err_code_list then CONST.err_code_list[errorCode] else errorCode)
+				($ '#error-text').text text
+				($ '#error').show()
+				($ '#main-function').show()
+
 	#####
 	# util
 	#####

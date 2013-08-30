@@ -6,7 +6,7 @@ vendors = webkit official
 
 @import "nib"
 
-$width = 124px
+$width = 144px
 $height = 16px
 
 html,
@@ -43,10 +43,20 @@ body
 		border 1px solid #ABC
 		background linear-gradient(top, 0% #e8eef4, 100% #f5f9f4)
 	span.text
-		left 28px
+		left 32px
 		position absolute
 	i[class^="icon"]
 		font-size 16px
 		color: #28C
 .item
 	height $height
+.item-free
+	padding 4px
+	width $width + 23px
+	text-align center
+	img
+		margin 8px auto
+		display block
+	.text
+		font-size 16px
+		padding 6px 10px
