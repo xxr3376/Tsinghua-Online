@@ -27,10 +27,11 @@ $ () ->
 				no_main_function = true
 				($ '#no-token').show()
 			else
-				text = (if errorCode of CONST.err_code_list then CONST.err_code_list[errorCode] else errorCode)
-				($ '#error-text').text text
-				($ '#error').show()
-				($ '#main-function').show()
+				if not no_main_function
+					text = (if errorCode of CONST.err_code_list then CONST.err_code_list[errorCode] else errorCode)
+					($ '#error-text').text text
+					($ '#error').show()
+					($ '#main-function').show()
 
 	#####
 	# util

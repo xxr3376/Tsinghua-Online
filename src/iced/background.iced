@@ -174,14 +174,23 @@ login_usereg = (successCallback, failCallback) ->
 			user_password: password
 		}
 		(result) ->
-			if result == CONST.flag.login_ok
-				successCallback && successCallback()
+			if result is CONST.flag.login_ok
+				last_login = localStorage.setItem(
+					CONST.storageKey.last_time_login_usereg
+					new Date().getTime()
+				)
+				successCallback?()
 			else
-				failCallback && failCallback result
+				failCallback?(result)
 	)
 login_guarantee = (successCallback) ->
+	last_login = localStorage.getItem CONST.storageKey.last_time_login_usereg, 0
+	now = new Date().getTime()
+	if (now - last_login) < CONST.guarantee_intervals.usereg
+		successCallback?()
 	login_usereg successCallback, (failReason) ->
-		console.log("登录失败：" + failReason)
+		if failReason in CONST.flag.password_error
+			set_error 'password_error'
 
 drop_user = (userIP,chksum,callback) ->
 	console.log "IP:"+userIP+" chksum:"+chksum
@@ -194,9 +203,9 @@ drop_user = (userIP,chksum,callback) ->
 		}
 		(result) ->
 			if result == "ok"
-				callback && callback 1
+				callback?(1)
 			else
-				callback && callback 0
+				callback?(0)
 	)
 
 dropall_usereg = (callback) ->

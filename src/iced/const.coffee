@@ -9,9 +9,11 @@ window.CONST =
 		check: "http://net.tsinghua.edu.cn/cgi-bin/do_login"
 	flag:
 		login_ok: 'ok'
+		password_error: ['用户不存在', '密码错误']
 	op:
 		updateFlow: 'updateFlow'
 		updateConnectNumber: 'updateCN'
+		initUpdate: 'init'
 		dropAllConnect: 'dropAll'
 		connectNow: 'CN'
 		disconnect: 'disconnect'
@@ -37,9 +39,11 @@ window.CONST =
 		connected: 4
 		unconnected: 5
 	auto_online_intervals:
-		IP_EXIST: 25000
+		IP_EXIST: 21000
 		NORMAL: 10000
 		IMMEDIATELY: 0
+	guarantee_intervals:
+		usereg: 30000
 	err_code_list:
 		username_error: "用户名错误"
 		password_error: "密码错误"
@@ -72,3 +76,4 @@ window.CONST =
 	]
 	storageKey:
 		auto_online: 'sp_key_auto_online'
+		last_time_login_usereg: 'sp_key_ltlu'
