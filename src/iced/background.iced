@@ -300,10 +300,31 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 ##########
 # do when background.js start
 
+
+
+onInstall = () ->
+	console.log "install"
+	localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
+	chrome.tabs.create
+		'url' : 'options.html'
+
+onUpdate = () ->
+	console.log "Extension Updated"
+
+getVersion = () ->
+    details = chrome.app.getDetails()
+    return details.version
+currVersion = getVersion()
+prevVersion = localStorage['version']
+if currVersion isnt prevVersion
+	if typeof prevVersion is 'undefined'
+		onInstall()
+	else
+	  onUpdate()
+localStorage['version'] = currVersion
+
 login_check()
 
-auto_online_switch = localStorage.getItem CONST.storageKey.auto_online, null
-if not auto_online_switch
-	localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
+auto_online_switch = localStorage.getItem CONST.storageKey.auto_online
 
 process_online_setting_change auto_online_switch
