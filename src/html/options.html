@@ -17,12 +17,13 @@
 				</h1>
 			</div>
 			<ul id="menu">
-				<li><a href="#0" contentid="0">账户</a></li>
+				<li><a href="#0" contentid="0">设置</a></li>
 				<li><a href="#1" contentid="1">关于</a></li>
+				<li><a href="#2" contentid="2">ChangeLog</a></li>
 			</ul>
 			<div id="main-wrap" class="box">
 				<div id="wrap-0" class="panel">
-					<form class="pure-form pure-form-aligned" action="">
+					<form id="token-form" class="pure-form pure-form-aligned" action="">
 						<div class="pure-control-group">
 							<label for="username">用户名</label>
 							<input id="username" type="text" placeholder="User ID" required/>
@@ -33,12 +34,63 @@
 						</div>
 						<button class="ladaa-btn" id="save-token">
 							<span class="ladda-label">保存</span>
-							<span class="ladda-spinner"><i class="icon-spinner icon-spin"></i></span>
 						</button>
+						<div id="saved">已保存</div>
 					</form>
+					<div id="switches">
+						<div class="row">
+							<span class="name">自动登陆</span>
+							<div class="onoffswitch">
+								<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+								<label class="onoffswitch-label" for="myonoffswitch">
+									<div class="onoffswitch-inner"></div>
+									<div class="onoffswitch-switch"></div>
+								</label>
+							</div>
+						</div>
+					</div>
+					
 				</div>
 				<div id="wrap-1" class="panel">
-					about
+					<h2>关于 Tsinghua Online </h2>
+					<p>
+					受到lab μ团队的启发，我们制作了校园网自动登录的Chrome插件版本，从此只要开着Chrome，连上WiFi就能上网，免去还得打开网页登录的烦恼！
+					</p>
+					<p>
+					除此之外，功能还包括：
+					</p>
+					<ul>
+						<li> 查询实时流量（准确值） </li>
+						<li> 查看连接数 </li>
+						<li> 强制踢掉所有连接（避免流量被盗） </li>
+					</ul>
+					<p> 我们提出你的建议~ mail：xxr3376@gmail.com </p>
+					<p> Github开源代码： <a href="https://github.com/xxr3376/Tsinghua-Online">https://github.com/xxr3376/Tsinghua-Online</a>
+					</p>
+					<p> 致谢： </p>
+					<ul>
+						<li>labμ 项目组的成员，激发了我们的想法</li>
+						<li>校园网登录页面的工程师们，提供了清晰可读的代码参考</li>
+						<li>pure &amp; FontAwesome：漂亮的界面</li>
+						<li>JQuery库：减轻了操作DOM的工作复杂度</li>
+						<li>Iced Coffee Script 的开发者：让代码清新了不少</li>
+						<li>Github：管理代码</li>
+						<li>proto.js：提供了漂亮的开关</li>
+						<li>Google的小铃铛：大家总会看到的</li>
+					</ul>
+				</div>
+				<div id="wrap-2" class="panel">
+					<h2> ChangeLog </h2>
+					<ul>
+						<li> 1.0 </li>
+						<ul>
+							<li> 查询实时流量 </li>
+							<li> 自动保持连接 </li>
+							<li> 查询链接数 </li>
+							<li> 手动连线、断线 </li>
+							<li> 断开所有IP </li>
+						</ul>
+					</ul>
 				</div>
 			</div>
 		</div>

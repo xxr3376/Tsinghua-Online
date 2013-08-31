@@ -294,11 +294,22 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 			return true
 		else
 			return false
+	else if feeds.op is CONST.op.reset
+		auto_online_switch = localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
+		clear_error()
+		auto_online_clear()
+		change_icon CONST.status.unconnected
+		localStorage.removeItem CONST.storageKey.last_time_login_usereg
+		login_check()
+		return false
+		
 ##########
 # do when background.js start
 
 login_check()
 
-auto_online_switch = localStorage.getItem CONST.storageKey.auto_online
-if auto_online_switch is CONST.status.auto_online_on
-	auto_online_set_event CONST.auto_online_intervals.IMMEDIATELY
+auto_online_switch = localStorage.getItem CONST.storageKey.auto_online, null
+if not auto_online_switch
+	localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
+
+process_online_setting_change auto_online_switch

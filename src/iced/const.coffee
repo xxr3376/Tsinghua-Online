@@ -21,6 +21,7 @@ window.CONST =
 		getLastError: 'getLastError'
 		passErrorCode: 'passErrorCode'
 		removeError: 'rmError'
+		reset: 'reset'
 	unitConvert:
 		'B' : 1
 		'K' : Math.pow(2, 10)
