@@ -97,18 +97,13 @@ $ () ->
 		cNumberDOM.text number
 	updateFlow = () ->
 		($ '#real-flow-btn i').show(100)
+		($ '#connect-number-btn i').show(100)
 		chrome.extension.sendMessage(
 			op: CONST.op.updateFlow
 			(response) ->
 				setFlow response.data
+				setConnectNumber response.online
 				($ '#real-flow-btn i').hide(1000)
-		)
-	updateConnectNumber = () ->
-		($ '#connect-number-btn i').show(100)
-		chrome.extension.sendMessage(
-			op: CONST.op.updateConnectNumber
-			(response) ->
-				setConnectNumber response.data
 				($ '#connect-number-btn i').hide(1000)
 		)
 	dropAll = () ->
@@ -129,7 +124,7 @@ $ () ->
 		flow_btn.on 'click', () ->
 			updateFlow()
 		connectNumber_btn.on 'click', () ->
-			updateConnectNumber()
+			updateFlow()
 		($ '#drop-all-btn').on 'click', () ->
 			dropAll()
 		($ '#options-btn').on 'click', () ->
@@ -152,7 +147,6 @@ $ () ->
 		# now refresh data
 		if not no_main_function
 			updateFlow()
-			updateConnectNumber()
 	updateGUI = () ->
 		status = localStorage.getItem CONST.storageKey.auto_online
 		if status is CONST.status.auto_online_on

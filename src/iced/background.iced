@@ -111,7 +111,6 @@ process_online_setting_change = (nowStatus) ->
 # @output: {status: CONST.status.?, username: current_username}
 login_check = (callback) ->
 	$.post(CONST.url.check, "action=check_online", (response) ->
-		console.log response
 		matches = response.match /\d+,([^,]+),\d+,\d+,\d+/
 		if matches
 			change_icon CONST.status.connected
@@ -251,22 +250,17 @@ real_time_userreg = (callback) ->
 		online_usereg defer online
 	total = old
 	total += (unit_convert online[i][1]) for i in [0..online.length - 1] if online.length > 0
-	callback(total)
+	callback(total, online.length)
 
 
 ##############
 # interface
 chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 	if feeds.op is CONST.op.updateFlow
-		real_time_userreg (result) ->
+		real_time_userreg (flow, onlineNum) ->
 			sendResponse(
-				data: result
-			)
-		return true
-	else if feeds.op is CONST.op.updateConnectNumber
-		online_usereg (result) ->
-			sendResponse(
-				data: result.length
+				data: flow
+				online: onlineNum
 			)
 		return true
 	else if feeds.op is CONST.op.dropAll
@@ -296,7 +290,7 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 			return false
 	else if feeds.op is CONST.op.reset
 		auto_online_switch = localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
-		clear_error()
+		clear_error(true)
 		auto_online_clear()
 		change_icon CONST.status.unconnected
 		localStorage.removeItem CONST.storageKey.last_time_login_usereg

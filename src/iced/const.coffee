@@ -12,7 +12,6 @@ window.CONST =
 		password_error: ['用户不存在', '密码错误']
 	op:
 		updateFlow: 'updateFlow'
-		updateConnectNumber: 'updateCN'
 		initUpdate: 'init'
 		dropAllConnect: 'dropAll'
 		connectNow: 'CN'
