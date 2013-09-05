@@ -15,7 +15,8 @@ $ () ->
 			show_error errorCode
 		else if feeds.op is CONST.op.removeError
 			($ '#error').hide()
-			($ '#main-function').show()
+			if not no_main_function
+				($ '#main-function').show()
 	show_error = (errorCode) ->
 		switch errorCode
 			when "username_error", "password_error"
@@ -95,6 +96,26 @@ $ () ->
 		flowDOM.text (unit2readable flowNumber)
 	setConnectNumber = (number) ->
 		cNumberDOM.text number
+	createIPDOM = (ip, flow) ->
+		dom = '<div class="ip-item" data-args="' + ip + '"><i class="icon-ban-circle"></i>'
+		dom += "<div class=\"ip\"> #{ip} </div> <div class=\"flow\"> #{flow} </div>"
+		dom += '</div>'
+		return ($ dom)
+	window.setIPControl = (onlineArray) ->
+		ip_list = ($ '#ip-list')
+		ip_list.children().remove?()
+		for online in onlineArray
+			ip_list.append (createIPDOM.apply @, online)
+		($ '.ip-item').on 'click', () ->
+			targetIP = @.getAttribute 'data-args'
+			dom = @
+			chrome.extension.sendMessage(
+				op: CONST.op.drop
+				target: targetIP
+				(response) ->
+					updateFlow()
+					($ dom).remove()
+			)
 	updateFlow = () ->
 		($ '#real-flow-btn i').show(100)
 		($ '#connect-number-btn i').show(100)
@@ -102,17 +123,20 @@ $ () ->
 			op: CONST.op.updateFlow
 			(response) ->
 				setFlow response.data
-				setConnectNumber response.online
+				setConnectNumber response.onlineNum
+				setIPControl response.onlineArray
 				($ '#real-flow-btn i').hide(1000)
 				($ '#connect-number-btn i').hide(1000)
 		)
 	dropAll = () ->
-		($ '#drop-all-btn i').show(100)
+		($ '#drop-all-btn i.icon-trash').hide()
+		($ '#drop-all-btn i.icon-refresh').show(100)
 		chrome.extension.sendMessage(
 			op: CONST.op.dropAll
 			(response) ->
 				setConnectNumber 0
-				($ '#drop-all-btn i').hide(1000)
+				($ '#drop-all-btn i.icon-refresh').hide()
+				($ '#drop-all-btn i.icon-trash').show(100)
 		)
 	init = () ->
 		($ '#no-token, #wrong-token').on 'click', () ->
@@ -132,10 +156,18 @@ $ () ->
 		($ '#about-btn').on 'click', () ->
 			window.open 'options.html#1'
 		($ 'i.icon-refresh.icon-spin').hide()
+		($ '#advance-ip-btn').on 'click', () ->
+			($ '#ip-control').show(300)
+			($ '#main-function').hide(300)
+			no_main_function = true
 		($ '#connect-btn').on 'click', () ->
 			chrome.extension.sendMessage(
 				op:CONST.op.connectNow
 			)
+		($ '#back-btn').on 'click', () ->
+			($ '#ip-control').hide(300)
+			($ '#main-function').show(300)
+			no_main_function = false
 		($ '#disconnect-btn').on 'click', () ->
 			localStorage.setItem CONST.storageKey.auto_online, CONST.status.auto_online_off
 			chrome.extension.sendMessage(

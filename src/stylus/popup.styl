@@ -20,7 +20,8 @@ body
 	border 0
 	border-top 1px solid #ddd
 .item,
-.item-free
+.item-free,
+.ip-item
 	display block
 	margin 0 2px
 	padding 4px 25px 4px 6px
@@ -50,6 +51,19 @@ body
 		color: #28C
 .item
 	height $height
+.ip-item
+	height 1.5 * $height
+	& i
+		color #7d2f31 !important
+	.ip
+		position absolute
+		top 5px
+		left 30px
+		color #444
+	.flow
+		position absolute
+		top $height
+		right 15px
 .item-free
 	padding 4px
 	width $width + 23px
@@ -65,3 +79,5 @@ body
 		color #7d2f31
 	i[class^="icon"]
 		color #7d2f31
+.loading
+	text-align center

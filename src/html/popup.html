@@ -36,10 +36,32 @@
 				<i class="icon-refresh icon-spin"></i>
 				<span class="text"> 连接数: <span id="connect-number"></span></span>
 			</div>
+			<div id="advance-ip-btn" class="item">
+				<i class="icon-arrow-right"></i>
+				<span class="text"> 登陆IP控制 <span id="connect-number"></span></span>
+			</div>
+		</div>
+		<div id="ip-control" style="display:none;">
+			<div id="back-btn" class="item">
+				<i class="icon-arrow-left"></i>
+				<span class="text"> 返回 <span id="connect-number"></span></span>
+			</div>
+			<div id="ip-list">
+				<div class="loading">正在同步</div>
+			</div>
+			<div class="separator"></div>
 			<div id="drop-all-btn" class="item">
+				<i class="icon-trash"></i>
 				<i class="icon-refresh icon-spin"></i>
 				<span class="text"> 断开所有登陆IP </span>
 			</div>
+			<!--
+			<div id="drop-all-btn" class="item">
+				<i class="icon-trash"></i>
+				<i class="icon-refresh icon-spin"></i>
+				<span class="text"> 登陆其他IP </span>
+			</div>
+			-->
 		</div>
 		<div id="wrong-token" style="display:none;">
 			<div class="item-free">

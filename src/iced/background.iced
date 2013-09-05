@@ -20,7 +20,7 @@ unit_convert = (input) ->
 	number = parseFloat matches[1]
 	unit = matches[3]
 	if unit of CONST.unitConvert
-		return number * CONST.unitConvert[unit]
+ 		return number * CONST.unitConvert[unit]
 	else
 		return number
 ###
@@ -149,7 +149,21 @@ login_net_post = (successCallback, failCallback) ->
 				change_icon CONST.status.unconnected
 				failCallback && failCallback result
 	)
-
+login_ip = (ip, callback) ->
+	[username, password] = get_token()
+	$.post(
+		CONST.url.login_net
+		{
+			username: username
+			password: password
+			drop: 0
+			type: 10
+			n: 100
+			is_pad: 1
+			user_ip: ip
+		}
+		callback
+	)
 login_net = (successCallback) ->
 	login_net_post(
 		successCallback
@@ -214,7 +228,14 @@ dropall_usereg = (callback) ->
 		await drop_user online[0][0],online[0][2], defer suc
 		await online_usereg defer online
 	callback && callback 0
-
+drop_by_ip = (ip, callback) ->
+	ip = ($.trim ip)
+	await online_usereg defer onlineArray
+	for online in onlineArray
+		if ip == ($.trim online[0])
+			drop_user online[0], online[2], callback
+			return true
+	return false
 drop = (ip,chksum) ->
 	console.log(chksum)
 	chksum
@@ -250,17 +271,18 @@ real_time_userreg = (callback) ->
 		online_usereg defer online
 	total = old
 	total += (unit_convert online[i][1]) for i in [0..online.length - 1] if online.length > 0
-	callback(total, online.length)
+	callback(total, online.length, online)
 
 
 ##############
 # interface
 chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 	if feeds.op is CONST.op.updateFlow
-		real_time_userreg (flow, onlineNum) ->
+		real_time_userreg (flow, onlineNum, onlineArray) ->
 			sendResponse(
 				data: flow
-				online: onlineNum
+				onlineNum: onlineNum
+				onlineArray: onlineArray
 			)
 		return true
 	else if feeds.op is CONST.op.dropAll
@@ -296,11 +318,13 @@ chrome.runtime.onMessage.addListener (feeds, sender, sendResponse) ->
 		localStorage.removeItem CONST.storageKey.last_time_login_usereg
 		login_check()
 		return false
+	else if feeds.op is CONST.op.drop
+		drop_by_ip feeds.target, () ->
+			sendResponse()
+		return true
 		
 ##########
 # do when background.js start
-
-
 
 onInstall = () ->
 	console.log "install"
