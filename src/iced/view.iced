@@ -68,10 +68,12 @@ $ () ->
 				return item.value
 	# convert unit from Byte to most readable one
 	unit2readable = (input) ->
+		if input is undefined
+			return '请重试'
 		result = input + 'Byte'
 		for unit of CONST.unitConvert
 			converted = input / CONST.unitConvert[unit]
-			if converted > 1 and converted < 512
+			if converted >= 1 and converted < 1024
 				result = ('' + converted).substr(0, 5) + unit
 		return result
 
