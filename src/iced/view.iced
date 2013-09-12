@@ -77,6 +77,13 @@ $ () ->
 				result = ('' + converted).substr(0, 5) + unit
 		return result
 
+	unit2percent = (input) ->
+		if input is undefined
+			return '请重试'
+		result = Math.ceil(input / 1024 / 1024 / 1024 * 5)
+		result = ('' + result).substr(0, 2) + '%'
+		return result
+
 	switch_auto_connect_setting = () ->
 		current = localStorage.getItem CONST.storageKey.auto_online
 		next = CONST.status.auto_online_off
@@ -96,6 +103,9 @@ $ () ->
 	connectNumber_btn = ($ '#connect-number-btn')
 	setFlow = (flowNumber) ->
 		flowDOM.text (unit2readable flowNumber)
+		chrome.browserAction.setBadgeText(
+			text: (unit2percent flowNumber)
+		)
 	setConnectNumber = (number) ->
 		cNumberDOM.text number
 	createIPDOM = (ip, flow) ->
@@ -151,6 +161,7 @@ $ () ->
 			updateFlow()
 		connectNumber_btn.on 'click', () ->
 			updateFlow()
+		setInterval updateFlow, 300000
 		($ '#drop-all-btn').on 'click', () ->
 			dropAll()
 		($ '#options-btn').on 'click', () ->
