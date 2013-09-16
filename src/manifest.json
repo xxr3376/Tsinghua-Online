@@ -1,6 +1,6 @@
 {
 	"manifest_version" : 2,
-	"name" : "<%= pkg.name %>",
+	"name" : "Tsinghua Online",
 	"version":"<%= pkg.version %>",
 	"description":"<%= pkg.description %>",
 	"minimum_chrome_version" : "22",
