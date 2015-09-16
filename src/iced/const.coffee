@@ -1,12 +1,14 @@
 window.CONST =
 	url:
-		login_net: "http://net.tsinghua.edu.cn/cgi-bin/do_login"
-		logout_net: "http://net.tsinghua.edu.cn/cgi-bin/do_logout"
-		login_suc: "http://net.tsinghua.edu.cn/succeed.html?"
+		login_net: "https://net.tsinghua.edu.cn/do_login.php"
+		userinfo_net: "https://net.tsinghua.edu.cn/rad_user_info.php"
+		logout_net: "https://net.tsinghua.edu.cn/do_login.php"
+		login_suc: "https://net.tsinghua.edu.cn/succeed.html?"
+		iplogin_net: "http://usereg.tsinghua.edu.cn/ip_login.php"
 		login: "http://usereg.tsinghua.edu.cn/do.php",
 		online: "http://usereg.tsinghua.edu.cn/online_user_ipv4.php",
 		stats: "http://usereg.tsinghua.edu.cn/user_detail_statistics.php"
-		check: "http://net.tsinghua.edu.cn/cgi-bin/do_login"
+		check: "https://net.tsinghua.edu.cn/do_login.php"
 	flag:
 		login_ok: 'ok'
 		password_error: ['用户不存在', '密码错误']
