@@ -40,3 +40,7 @@ Use `grunt dev` to watch changes in `src/`
 ** v1.1.0 **
 * manage IP
 * FIX: display for real time Usage
+
+** v1.2.0 **
+* support new login page
+* show device information in manage IP page

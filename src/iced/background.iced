@@ -111,14 +111,27 @@ process_online_setting_change = (nowStatus) ->
 # @output: {status: CONST.status.?, username: current_username}
 login_check = (callback) ->
 	$.post(CONST.url.check, "action=check_online", (response) ->
-		matches = response.match /\d+,([^,]+),\d+,\d+,\d+/
+		matches = response.match /^online$/
 		if matches
-			change_icon CONST.status.connected
-			clear_error()
-			callback && callback(
-				status: CONST.status.logged_in
-				username: matches[1]
-			)
+			$.post(CONST.url.userinfo_net, (response) ->
+				matches = response.match /([a-zA-Z0-9]+),\d+,\d+,\d+,\d+,\d+,\d+,\d+,([0-9\.]+),\d+,\d*,([0-9\.]+),\d+/
+				if matches
+					change_icon CONST.status.connected
+					clear_error()
+					callback && callback(
+						status: CONST.status.logged_in
+						username: matches[1]
+					)
+				else
+					change_icon CONST.status.unconnected
+					callback && callback(
+						status: CONST.status.not_logged_in
+					)
+			).fail ->
+				change_icon CONST.status.unconnected
+				callback && callback(
+					status: CONST.status.cant_reach_net
+				)
 		else
 			change_icon CONST.status.unconnected
 			callback && callback(
@@ -129,19 +142,19 @@ login_check = (callback) ->
 		callback && callback(
 			status: CONST.status.cant_reach_net
 		)
+
 login_net_post = (successCallback, failCallback) ->
 	[username, password] = get_token()
 	$.post(
 		CONST.url.login_net
 		{
 			username: username
-			password: password
-			drop: 0
-			type: 1
-			n: 100
+			password: "{MD5_HEX}" + password
+			action: "login"
+			ac_id: 1
 		}
 		(result) ->
-			if /^\d+,/.test result
+			if /^Login is successful.$/.test result
 				change_icon CONST.status.connected
 				clear_error()
 				successCallback && successCallback result
@@ -152,7 +165,7 @@ login_net_post = (successCallback, failCallback) ->
 login_ip = (ip, callback) ->
 	[username, password] = get_token()
 	$.post(
-		CONST.url.login_net
+		CONST.url.iplogin_net
 		{
 			username: username
 			password: password
@@ -173,6 +186,9 @@ login_net = (successCallback) ->
 logout_net = (callback) ->
 	$.post(
 		CONST.url.logout_net
+		{
+			action: "logout"
+		}
 		(res) ->
 			callback && callback res
 			change_icon CONST.status.unconnected
@@ -206,14 +222,13 @@ login_guarantee = (successCallback) ->
 		if failReason in CONST.flag.password_error
 			set_error 'password_error'
 
-drop_user = (userIP,chksum,callback) ->
-	console.log "IP:"+userIP+" chksum:"+chksum
+drop_user = (userIP,callback) ->
+	console.log "IP:"+userIP
 	$.post(
 		CONST.url.online
 		{
 			action: "drop"
 			user_ip: userIP
-			checksum: chksum
 		}
 		(result) ->
 			if result == "ok"
@@ -225,7 +240,7 @@ drop_user = (userIP,chksum,callback) ->
 dropall_usereg = (callback) ->
 	await online_usereg defer online
 	while online.length > 0
-		await drop_user online[0][0],online[0][2], defer suc
+		await drop_user online[0][0], defer suc
 		await online_usereg defer online
 	callback && callback 0
 drop_by_ip = (ip, callback) ->
@@ -233,12 +248,11 @@ drop_by_ip = (ip, callback) ->
 	await online_usereg defer onlineArray
 	for online in onlineArray
 		if ip == ($.trim online[0])
-			drop_user online[0], online[2], callback
+			drop_user online[0], callback
 			return true
 	return false
-drop = (ip,chksum) ->
-	console.log(chksum)
-	chksum
+drop = (ip) ->
+	console.log(ip)
 
 online_usereg = (callback) ->
 	login_guarantee ()->
@@ -246,13 +260,10 @@ online_usereg = (callback) ->
 			CONST.url.online
 			(data)->
 				elms = (parser.parseFromString data,"text/html").querySelectorAll "td.maintd"
-				count = elms.length/12
+				count = elms.length/14
 				rtn = []
 				if count > 1
-					rtn = (elms[i*12+j].innerText for j in [2,3] for i in [1..count-1])
-					for i in [1..count-1]
-						elm = elms[12 * i + 11].children.item(0).outerHTML
-						rtn[i-1].push elm.match(/drop\('(.+?)','(.+?)'\)/)[2]
+					rtn = (elms[i*14+j].innerText for j in [1,3,11] for i in [1..count-1])
 				callback(rtn)
 		)
 stats_usereg = (callback) ->
@@ -336,8 +347,8 @@ onUpdate = () ->
 	console.log "Extension Updated"
 
 getVersion = () ->
-    details = chrome.app.getDetails()
-    return details.version
+	details = chrome.app.getDetails()
+	return details.version
 currVersion = getVersion()
 prevVersion = localStorage['version']
 if currVersion isnt prevVersion

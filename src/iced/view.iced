@@ -98,9 +98,10 @@ $ () ->
 		flowDOM.text (unit2readable flowNumber)
 	setConnectNumber = (number) ->
 		cNumberDOM.text number
-	createIPDOM = (ip, flow) ->
+	createIPDOM = (ip, flow, device) ->
 		dom = '<div class="ip-item" data-args="' + ip + '"><i class="icon-ban-circle"></i>'
-		dom += "<div class=\"ip\"> #{ip} </div> <div class=\"flow\"> #{flow} </div>"
+		dom += "<div class=\"ip\"> #{ip} </div>"
+		dom += "<div class=\"info\"> <span class=\"device\"> #{device} </span> <span class=\"flow\"> #{flow} <span></div>"
 		dom += '</div>'
 		return ($ dom)
 	window.setIPControl = (onlineArray) ->
